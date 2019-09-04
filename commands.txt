@@ -1,0 +1,47 @@
+fio --name=randwrite --ioengine=libaio --iodepth=1 --rw=randwrite --bs=4k --direct=0 --size=100M --numjobs=1 --runtime=100 --status-interval=1 --group_reporting --time_based >> fio.txt
+
+fio --name=randread --ioengine=libaio --iodepth=1 --rw=randread --bs=4k --direct=0 --size=100M --numjobs=1 --runtime=100 --status-interval=1 --group_reporting --time_based >> fio.txt
+
+fio --name=seqwrite --ioengine=libaio --iodepth=1 --rw=write --bs=4k --direct=0 --size=100M --numjobs=1 --runtime=100 --status-interval=1 --group_reporting --time_based >> fio.txt
+
+fio --name=seqread --ioengine=libaio --iodepth=1 --rw=read --bs=4k --direct=0 --size=100M --numjobs=1 --runtime=100 --status-interval=1 --group_reporting --time_based >> fio.txt
+
+fio --name=randrw --ioengine=libaio --iodepth=1 --rw=randrw --rwmixread=70 --bs=4k --direct=0 --size=100M --numjobs=1 --runtime=60 --status-interval=1 --group_reporting --time_based >> fio.txt
+
+fio --name=seqrw --ioengine=libaio --iodepth=1 --rw=readwrite --rwmixread=70 --bs=4k --direct=0 --size=100M --numjobs=1 --runtime=60 --status-interval=1 --group_reporting --time_based >> fio.txt
+
+
+tail -f fio.txt | ./grok_exporter -config ./example/randwrite_config.yml
+
+tail -f fio.txt | ./grok_exporter -config ./example/randread_config.yml
+
+tail -f fio.txt | ./grok_exporter -config ./example/seqwrite_config.yml
+
+tail -f fio.txt | ./grok_exporter -config ./example/seqread_config.yml
+
+tail -f fio.txt | ./grok_exporter -config ./example/randrw_config.yml
+
+tail -f fio.txt | ./grok_exporter -config ./example/seqrw_config.yml
+
+
+readwrite=str, rw=str
+Type of I/O pattern. Accepted values are:
+
+read
+    Sequential reads.
+write
+    Sequential writes.
+trim
+    Sequential trims (Linux block devices and SCSI character devices only).
+randread
+    Random reads.
+randwrite
+    Random writes.
+randtrim
+    Random trims (Linux block devices and SCSI character devices only).
+rw,readwrite
+    Sequential mixed reads and writes.
+randrw
+    Random mixed reads and writes.
+trimwrite
+    Sequential trim+write sequences. Blocks will be trimmed first, then the same blocks will be written to.
